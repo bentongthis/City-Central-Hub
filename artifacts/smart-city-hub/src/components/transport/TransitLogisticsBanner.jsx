@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchTransitData } from '../../services/api';
-import { Truck, MapPin, Map } from 'lucide-react';
+import { AlertTriangle, Map, MapPin, Truck } from 'lucide-react';
 
 export default function TransitLogisticsBanner() {
   const [data, setData] = useState(null);
@@ -8,15 +8,13 @@ export default function TransitLogisticsBanner() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // AbortController lives in effect scope so cleanup can abort in-flight requests
     const controller = new AbortController();
 
     const loadData = async () => {
       const { data: result, error: err } = await fetchTransitData({ signal: controller.signal });
-      // Ignore aborted requests — component is unmounted
       if (err === 'Request aborted') return;
       if (err) {
-        setError("⚠️ Connecting to Dwight's Transit API Node...");
+        setError("Connecting to Dwight's Transit API Node...");
       } else {
         setData(result);
         setError(null);
@@ -38,7 +36,7 @@ export default function TransitLogisticsBanner() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/50 pb-4">
         <h2 className="text-xl font-semibold flex items-center gap-2">
           <Truck className="w-6 h-6 text-emerald-400" />
-          🚑 Transit &amp; Logistics Dashboard
+          Transit &amp; Logistics Dashboard
         </h2>
 
         {data && (
@@ -70,6 +68,7 @@ export default function TransitLogisticsBanner() {
         </div>
       ) : error ? (
         <div className="fallback-badge my-4 w-fit" data-testid="transit-fallback">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       ) : data ? (

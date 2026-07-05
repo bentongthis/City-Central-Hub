@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchHospitalData } from '../../services/api';
-import { Activity, Clock } from 'lucide-react';
+import { Activity, AlertTriangle, Clock } from 'lucide-react';
 
 export default function HospitalCapacityCard() {
   const [data, setData] = useState(null);
@@ -8,15 +8,13 @@ export default function HospitalCapacityCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // AbortController lives in effect scope so cleanup can abort in-flight requests
     const controller = new AbortController();
 
     const loadData = async () => {
       const { data: result, error: err } = await fetchHospitalData({ signal: controller.signal });
-      // Ignore aborted requests — component is unmounted
       if (err === 'Request aborted') return;
       if (err) {
-        setError("⚠️ Connecting to Joaron's API Node...");
+        setError("Connecting to Joaron's API Node...");
       } else {
         setData(result);
         setError(null);
@@ -38,7 +36,7 @@ export default function HospitalCapacityCard() {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <Activity className="w-5 h-5 text-teal-400" />
-          🏥 Hospital Capacity Module
+          Hospital Capacity Module
         </h2>
         {data && (
           <div className="flex items-center gap-2">
@@ -61,13 +59,15 @@ export default function HospitalCapacityCard() {
         </div>
       ) : error ? (
         <div className="fallback-badge mt-4" data-testid="hospital-fallback">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       ) : data ? (
         <div className="mt-4 flex flex-col gap-4" data-testid="hospital-data">
           <div className="flex justify-between items-end">
             <div className="data-value text-teal-400" data-testid="hospital-beds-available">
-              {data.available_beds} <span className="text-xl text-muted-foreground font-sans font-medium tracking-normal">/ {data.total_beds}</span>
+              {data.available_beds}
+              <span className="text-xl text-muted-foreground font-sans font-medium tracking-normal"> / {data.total_beds}</span>
             </div>
             <div className="text-xs text-muted-foreground pb-1">Beds Available</div>
           </div>
@@ -88,7 +88,9 @@ export default function HospitalCapacityCard() {
 
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-4 border-t border-border/50">
             <span className="font-mono text-[10px] bg-black/30 px-2 py-1 rounded border border-border/30" data-testid="hospital-citizen-id">ID: {data.citizen_id}</span>
-            <span className="flex items-center gap-1 font-mono" data-testid="hospital-last-updated"><Clock className="w-3.5 h-3.5" /> {data.last_updated}</span>
+            <span className="flex items-center gap-1 font-mono" data-testid="hospital-last-updated">
+              <Clock className="w-3.5 h-3.5" /> {data.last_updated}
+            </span>
           </div>
         </div>
       ) : null}

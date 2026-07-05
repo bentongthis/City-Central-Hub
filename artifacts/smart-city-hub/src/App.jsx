@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
-// @ts-expect-error - project requires jsx for these files
 import HospitalCapacityCard from './components/hospital/HospitalCapacityCard';
-// @ts-expect-error
 import SchoolMetricsCard from './components/school/SchoolMetricsCard';
-// @ts-expect-error
 import BusinessRegistryCard from './components/business/BusinessRegistryCard';
-// @ts-expect-error
 import TransitLogisticsBanner from './components/transport/TransitLogisticsBanner';
-// @ts-expect-error
 import CentralLogs from './components/global/CentralLogs';
 
 function App() {
@@ -15,7 +10,7 @@ function App() {
 
   useEffect(() => {
     document.documentElement.classList.add('dark');
-    
+
     const timer = setInterval(() => {
       setTime(new Date());
     }, 1000);
@@ -28,7 +23,7 @@ function App() {
   return (
     <div className="min-h-[100dvh] bg-background text-foreground p-4 md:p-6 lg:p-8 selection:bg-primary/30">
       <div className="max-w-[1400px] mx-auto space-y-6">
-        
+
         {/* HEADER */}
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 border-b border-border/50">
           <div>
@@ -46,7 +41,7 @@ function App() {
               {timeString}
             </div>
             <div className="font-mono text-[10px] text-muted-foreground uppercase tracking-widest mt-1.5 flex items-center justify-end gap-2">
-              {dateString} 
+              {dateString}
               <span className="text-border">|</span>
               <span className="text-emerald-400 font-bold">SYSTEM ONLINE</span>
             </div>
@@ -58,12 +53,12 @@ function App() {
           <HospitalCapacityCard />
           <SchoolMetricsCard />
           <BusinessRegistryCard />
-          
+
           <TransitLogisticsBanner />
-          
+
           <CentralLogs />
         </main>
-        
+
       </div>
     </div>
   );

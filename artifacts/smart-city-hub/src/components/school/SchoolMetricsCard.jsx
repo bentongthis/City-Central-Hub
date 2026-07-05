@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchSchoolData } from '../../services/api';
-import { ShieldAlert, Clock, GraduationCap } from 'lucide-react';
+import { AlertTriangle, Clock, GraduationCap, ShieldAlert } from 'lucide-react';
 
 export default function SchoolMetricsCard() {
   const [data, setData] = useState(null);
@@ -8,15 +8,13 @@ export default function SchoolMetricsCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // AbortController lives in effect scope so cleanup can abort in-flight requests
     const controller = new AbortController();
 
     const loadData = async () => {
       const { data: result, error: err } = await fetchSchoolData({ signal: controller.signal });
-      // Ignore aborted requests — component is unmounted
       if (err === 'Request aborted') return;
       if (err) {
-        setError("⚠️ Synching with Samson's MongoDB Collection...");
+        setError("Synching with Samson's MongoDB Collection...");
       } else {
         setData(result);
         setError(null);
@@ -38,7 +36,7 @@ export default function SchoolMetricsCard() {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <GraduationCap className="w-5 h-5 text-indigo-400" />
-          🏫 School Safety Metrics
+          School Safety Metrics
         </h2>
         {data && (
           <div className="flex items-center gap-2 px-2.5 py-1 bg-black/30 rounded border border-border/50 shadow-inner" data-testid="school-safety-badge">
@@ -61,6 +59,7 @@ export default function SchoolMetricsCard() {
         </div>
       ) : error ? (
         <div className="fallback-badge mt-4" data-testid="school-fallback">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       ) : data ? (
@@ -87,7 +86,9 @@ export default function SchoolMetricsCard() {
 
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/50">
             <span className="font-mono text-[10px] bg-black/30 px-2 py-1 rounded border border-border/30" data-testid="school-citizen-id">ID: {data.citizen_id}</span>
-            <span className="flex items-center gap-1 font-mono" data-testid="school-last-updated"><Clock className="w-3.5 h-3.5" /> {data.last_updated}</span>
+            <span className="flex items-center gap-1 font-mono" data-testid="school-last-updated">
+              <Clock className="w-3.5 h-3.5" /> {data.last_updated}
+            </span>
           </div>
         </div>
       ) : null}

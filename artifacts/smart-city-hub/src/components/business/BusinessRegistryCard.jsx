@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchBusinessData } from '../../services/api';
-import { Building2, Clock, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Building2, CheckCircle2, Clock } from 'lucide-react';
 
 export default function BusinessRegistryCard() {
   const [data, setData] = useState(null);
@@ -8,15 +8,13 @@ export default function BusinessRegistryCard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // AbortController lives in effect scope so cleanup can abort in-flight requests
     const controller = new AbortController();
 
     const loadData = async () => {
       const { data: result, error: err } = await fetchBusinessData({ signal: controller.signal });
-      // Ignore aborted requests — component is unmounted
       if (err === 'Request aborted') return;
       if (err) {
-        setError("⚠️ Synching with Cleverson's MongoDB Collection...");
+        setError("Synching with Cleverson's MongoDB Collection...");
       } else {
         setData(result);
         setError(null);
@@ -38,7 +36,7 @@ export default function BusinessRegistryCard() {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <Building2 className="w-5 h-5 text-amber-400" />
-          🏢 Business Registry
+          Business Registry
         </h2>
       </div>
 
@@ -50,6 +48,7 @@ export default function BusinessRegistryCard() {
         </div>
       ) : error ? (
         <div className="fallback-badge mt-4" data-testid="business-fallback">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       ) : data ? (
@@ -87,7 +86,9 @@ export default function BusinessRegistryCard() {
 
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-1 border-t border-border/50 mt-1">
             <span className="font-mono text-[10px] bg-black/30 px-2 py-1 rounded border border-border/30" data-testid="business-citizen-id">ID: {data.citizen_id}</span>
-            <span className="flex items-center gap-1 font-mono" data-testid="business-last-updated"><Clock className="w-3.5 h-3.5" /> {data.last_updated}</span>
+            <span className="flex items-center gap-1 font-mono" data-testid="business-last-updated">
+              <Clock className="w-3.5 h-3.5" /> {data.last_updated}
+            </span>
           </div>
         </div>
       ) : null}

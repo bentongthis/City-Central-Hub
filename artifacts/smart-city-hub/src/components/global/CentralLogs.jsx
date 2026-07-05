@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchCityLogs } from '../../services/api';
-import { Terminal, Radio } from 'lucide-react';
+import { AlertTriangle, Radio, Terminal } from 'lucide-react';
 
 const MAX_LOG_ENTRIES = 50;
 
@@ -10,16 +10,14 @@ export default function CentralLogs() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // AbortController lives in effect scope so cleanup can abort in-flight requests
     const controller = new AbortController();
 
     const loadData = async () => {
       const { data, error: err } = await fetchCityLogs({ signal: controller.signal });
-      // Ignore aborted requests — component is unmounted
       if (err === 'Request aborted') return;
 
       if (err) {
-        setError("⚠️ Connecting to Joaron's API Node...");
+        setError("Connecting to Joaron's API Node...");
       } else if (data) {
         setError(null);
         const incoming = Array.isArray(data) ? data : [data];
@@ -27,7 +25,6 @@ export default function CentralLogs() {
         setLogs(prev => {
           const existingIds = new Set(prev.map(l => l._id));
           const uniqueNew = incoming.filter(l => !existingIds.has(l._id));
-          // Prepend newest entries, cap at MAX_LOG_ENTRIES
           return [...uniqueNew, ...prev].slice(0, MAX_LOG_ENTRIES);
         });
       }
@@ -83,6 +80,7 @@ export default function CentralLogs() {
         </div>
       ) : error ? (
         <div className="fallback-badge my-2 w-fit" data-testid="logs-fallback">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       ) : (
@@ -94,7 +92,7 @@ export default function CentralLogs() {
                 {(log.module || '').toUpperCase()}
               </span>
               <span className="text-muted-foreground shrink-0 w-[160px] font-mono">{log.timestamp}</span>
-              <span className="text-primary/50 font-bold">→</span>
+              <span className="text-primary/50 font-bold">-&gt;</span>
               <span className="text-white/90 whitespace-nowrap">
                 <span className="text-muted-foreground text-xs uppercase tracking-wider mr-1">Citizen:</span>
                 <span className="font-mono" data-testid={`log-citizen-${log._id}`}>{log.citizen_id}</span>
